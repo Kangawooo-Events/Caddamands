@@ -63,3 +63,24 @@ processResources {
         expand props
     }
 }
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = 'cd.arnett'
+            artifactId = 'caddamands'
+            version = '2.A.6'
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            name = "Caddamands"
+            url = uri("https://maven.pkg.github.com/kangawooo-events/caddamands")
+            credentials {
+                // Checks gradle.properties first, then Environment Variables
+                username = project.findProperty("github.user") as String ?: System.getenv("github.user")
+                password = project.findProperty("github.token") as String ?: System.getenv("github.token")
+            }
+        }
+    }
+}

@@ -230,6 +230,7 @@ public abstract class Cattamand {
             //fill execution if empty otherwise apply it's execution and save the commands execution for an earlier argument
             if(currentArgument.getExecutes() != null)
             {
+
                 //apply the arguments execution
                 arg.executes(currentArgument.getExecutes());
             }

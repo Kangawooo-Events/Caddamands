@@ -22,12 +22,12 @@ public class Cattarameter
                     -  Properties  -
     =================================================================================================*/
 
-        String name;
-        ArgumentType<?> type;
-        Map<String, String> literalSuggestions;
-        Function<CommandContext<CommandSourceStack>, Map<String, String>> lambdaSuggestions;
-        boolean doDefaultSuggestions;
-        Command<CommandSourceStack> executes;
+    String name;
+    ArgumentType<?> type;
+    Map<String, String> literalSuggestions;
+    Function<CommandContext<CommandSourceStack>, Map<String, String>> lambdaSuggestions;
+    boolean doDefaultSuggestions;
+    Command<CommandSourceStack> executes;
 
     //endregion
 

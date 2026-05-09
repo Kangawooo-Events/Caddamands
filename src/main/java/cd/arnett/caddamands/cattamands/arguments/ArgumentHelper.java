@@ -17,6 +17,14 @@ import java.util.List;
 
 @SuppressWarnings("UnstableApiUsage")
 public class ArgumentHelper {
+
+    /**
+     *
+     * Easily resolves a list of players from a provided "Players" argument
+     * @param argName name of the arguemnt to resolve
+     * @param ctx context of the command
+     * @return List of players
+     */
     public static List<Player> getPlayersFromArgs(String argName, CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException
     {
         return ctx.getArgument(argName, PlayerSelectorArgumentResolver.class).resolve(ctx.getSource());
@@ -49,6 +57,13 @@ public class ArgumentHelper {
         }
     }
 
+    /**
+     *
+     * Gets the player who sent this command or throws a command syntax error and sends the error message if not sent from a
+     * player
+     * @param ctx context of the command
+     * @return sending player
+     */
     public static Player getPlayerSender(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         CommandSender sender = ctx.getSource().getSender();
 

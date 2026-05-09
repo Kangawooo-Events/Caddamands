@@ -55,6 +55,12 @@ public class InterperetedCattarameter extends Cattarameter
         super(name, type, literalSuggestions, lambdaSuggestions, doDefaultSuggestions, executes);
     }
 
+
+    /**
+     * Whether the argument type is for a single object e.g. (PlayerArgumentType (Player) vs PlayersArgumentType (List<Player>))
+     * @param single
+     * @return this object
+     */
     public InterperetedCattarameter setSingle(boolean single)
     {
         isSingle = single;

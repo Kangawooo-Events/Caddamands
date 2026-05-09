@@ -46,6 +46,7 @@ public class Catterpreter {
     public interface S7<A, B, C, D, E, F, G> extends Serializable { void run(A a, B b, C c, D d, E e, F f, G g); }
     public interface S8<A, B, C, D, E, F, G, H> extends Serializable { void run(A a, B b, C c, D d, E e, F f, G g, H h); }
 
+    //converter map
     public static Map<Class<?>, ArgumentType<?>> mapToArg = Map.ofEntries(
             Map.entry(Boolean.class, BoolArgumentType.bool()),
             Map.entry(boolean.class, BoolArgumentType.bool()),
@@ -79,6 +80,7 @@ public class Catterpreter {
             Map.entry(UUID.class, ArgumentTypes.uuid())
     );
 
+    //converter map for lists
     public static Map<Class<?>, ArgumentType<?>> listMapToArg = Map.ofEntries(
             Map.entry(Player.class, ArgumentTypes.players()),
             Map.entry(Entity.class, ArgumentTypes.entities()),
@@ -86,9 +88,11 @@ public class Catterpreter {
     );
 
     /**
-     * Finds all methods annotated as @interpretedCattamand and returns a list of them translated to Cattamand Objects
-     * @param obj Class to check
-     * @return List of now translated Cattamands
+     * Finds all methods annotated as @Catterpret and returns a single root Cattamand based on the class
+     * (see @Catterpret/@Paramatter) with child Cattamands for each method
+     * @param classType Class to convert
+     * @param obj Reference to the object commands call methods from (if NULL will only include the static methods as children)
+     * @return Now translated Cattamand from class, permissions default to 'op'
      */
     public static Cattamand fromClass(Class<?> classType, Object obj)
     {
@@ -156,17 +160,36 @@ public class Catterpreter {
         return new LiteralCattamand(rootName, interpreted);
     }
 
+
+    /**
+     * Finds all STATIC methods annotated as @Catterpret and returns a single root Cattamand based on the class
+     * (see @Catterpret/@Paramatter) with child Cattamands for each STATIC method
+     * @param classType Class to convert
+     * @return Now translated Cattamand from class with only STATIC methods, permissions default to 'op'
+     */
     public static Cattamand fromClass(Class<?> classType)
     {
         return fromClass(classType, null);
     }
 
+
+    /**
+     * Finds all methods annotated as @Catterpret and returns a single root Cattamand based on the class
+     * (see @Catterpret/@Paramatter) with child Cattamands for each method
+     * @param obj Reference to the object commands call methods from (if NULL will only include the static methods as children)
+     * @return Now translated Cattamand from class, permissions default to 'op'
+     */
     public static Cattamand fromClass(Object obj)
     {
         return fromClass(obj.getClass(), obj);
     }
 
 
+    /**
+     * Converts the passed type to an Argument type, throws IllegalArgumentException if no ArgumentType is found
+     * @param type The type to convert
+     * @return The converted ArgumentType
+     */
     public static ArgumentType<?> convertToArgumentType(Type type) throws IllegalArgumentException
     {
         //is this a generic type (like list<...>)
@@ -188,13 +211,25 @@ public class Catterpreter {
         }
     }
 
-    public static Map.Entry<String, String> convertToSuggestion(String str)
+
+    /**
+     * Converts the String from the Paramatter to a Cattamand Suggestion (by the format "Suggestion|Hovertext")
+     * @param string The string to convert
+     * @return A Map entry splitting the String by the first '|'
+     */
+    public static Map.Entry<String, String> convertToSuggestion(String string)
     {
-        String[] split = str.split("\\|", 2);
+        String[] split = string.split("\\|", 2);
 
         return Map.entry(split[0], split[1]);
     }
 
+
+    /**
+     * Converts a Static Method into a Literal Cattamand, using any annotation info provided (see @Catterpret/@Paramatter)
+     * @param method The method to convert
+     * @return The completed Cattamand, permissions default to 'op' and name to the name of the method
+     */
     public static LiteralCattamand fromMethodStatic(Method method)
     {
         if(Modifier.isStatic(method.getModifiers()))
@@ -203,6 +238,14 @@ public class Catterpreter {
         throw new IllegalArgumentException("Method provided " + method.getName() + " is NOT static");
     }
 
+
+    /**
+     * Converts a Method into a Literal Cattamand, using any annotation info provided (see @Catterpret/@Paramatter)
+     * @param instance Instance of the object command calls methods from
+     *                (if this is for a static method this can be NULL, or use #fromMethodStatic(method))
+     * @param method Method to be called from the instance
+     * @return The completed Cattamand, permissions default to 'op' and name to the name of the method
+     */
     public static LiteralCattamand fromMethod(Object instance, Method method)
     {
         Catterpret catterpret = method.getAnnotation(Catterpret.class);
@@ -303,16 +346,66 @@ public class Catterpreter {
         ).build();
     }
 
-    public static LiteralCattamand fromMethod(S0 s) { return fromMethodBase(s); }
-    public static <A> LiteralCattamand fromMethod(S1<A> s) { return fromMethodBase(s); }
-    public static <A, B> LiteralCattamand fromMethod(S2<A, B> s) { return fromMethodBase(s); }
-    public static <A, B, C> LiteralCattamand fromMethod(S3<A, B, C> s) { return fromMethodBase(s); }
-    public static <A, B, C, D> LiteralCattamand fromMethod(S4<A, B, C, D> s) { return fromMethodBase(s); }
-    public static <A, B, C, D, E> LiteralCattamand fromMethod(S5<A, B, C, D, E> s) { return fromMethodBase(s); }
-    public static <A, B, C, D, E, F> LiteralCattamand fromMethod(S6<A, B, C, D, E, F> s) { return fromMethodBase(s); }
-    public static <A, B, C, D, E, F, G> LiteralCattamand fromMethod(S7<A, B, C, D, E, F, G> s) { return fromMethodBase(s); }
-    public static <A, B, C, D, E, F, G, H> LiteralCattamand fromMethod(S8<A, B, C, D, E, F, G, H> s) { return fromMethodBase(s); }
+    /**
+     * Converts a Method into a Literal Cattamand, using any annotation info provided (see @Catterpret/@Paramatter)
+     * @param s SerializableLambda referencing method with (0 parameters)
+     * @return The completed Cattamand, permissions default to 'op' and name to the name of the method
+     */
+    private static LiteralCattamand fromMethod(S0 s) { return fromMethodBase(s); }
+    /**
+     * Converts a Method into a Literal Cattamand, using any annotation info provided (see @Catterpret/@Paramatter)
+     * @param s SerializableLambda referencing method with (1 parameter)
+     * @return The completed Cattamand, permissions default to 'op' and name to the name of the method
+     */
+    private static <A> LiteralCattamand fromMethod(S1<A> s) { return fromMethodBase(s); }
+    /**
+     * Converts a Method into a Literal Cattamand, using any annotation info provided (see @Catterpret/@Paramatter)
+     * @param s SerializableLambda referencing method with (2 parameters)
+     * @return The completed Cattamand, permissions default to 'op' and name to the name of the method
+     */
+    private static <A, B> LiteralCattamand fromMethod(S2<A, B> s) { return fromMethodBase(s); }
+    /**
+     * Converts a Method into a Literal Cattamand, using any annotation info provided (see @Catterpret/@Paramatter)
+     * @param s SerializableLambda referencing method with (3 parameters)
+     * @return The completed Cattamand, permissions default to 'op' and name to the name of the method
+     */
+    private static <A, B, C> LiteralCattamand fromMethod(S3<A, B, C> s) { return fromMethodBase(s); }
+    /**
+     * Converts a Method into a Literal Cattamand, using any annotation info provided (see @Catterpret/@Paramatter)
+     * @param s SerializableLambda referencing method with (4 parameters)
+     * @return The completed Cattamand, permissions default to 'op' and name to the name of the method
+     */
+    private static <A, B, C, D> LiteralCattamand fromMethod(S4<A, B, C, D> s) { return fromMethodBase(s); }
+    /**
+     * Converts a Method into a Literal Cattamand, using any annotation info provided (see @Catterpret/@Paramatter)
+     * @param s SerializableLambda referencing method with (5 parameters)
+     * @return The completed Cattamand, permissions default to 'op' and name to the name of the method
+     */
+    private static <A, B, C, D, E> LiteralCattamand fromMethod(S5<A, B, C, D, E> s) { return fromMethodBase(s); }
+    /**
+     * Converts a Method into a Literal Cattamand, using any annotation info provided (see @Catterpret/@Paramatter)
+     * @param s SerializableLambda referencing method with (6 parameters)
+     * @return The completed Cattamand, permissions default to 'op' and name to the name of the method
+     */
+    private static <A, B, C, D, E, F> LiteralCattamand fromMethod(S6<A, B, C, D, E, F> s) { return fromMethodBase(s); }
+    /**
+     * Converts a Method into a Literal Cattamand, using any annotation info provided (see @Catterpret/@Paramatter)
+     * @param s SerializableLambda referencing method with (7 parameters)
+     * @return The completed Cattamand, permissions default to 'op' and name to the name of the method
+     */
+    private static <A, B, C, D, E, F, G> LiteralCattamand fromMethod(S7<A, B, C, D, E, F, G> s) { return fromMethodBase(s); }
+    /**
+     * Converts a Method into a Literal Cattamand, using any annotation info provided (see @Catterpret/@Paramatter)
+     * @param s SerializableLambda referencing method with (8 parameters)
+     * @return The completed Cattamand, permissions default to 'op' and name to the name of the method
+     */
+    private static <A, B, C, D, E, F, G, H> LiteralCattamand fromMethod(S8<A, B, C, D, E, F, G, H> s) { return fromMethodBase(s); }
 
+    /**
+     * The base function for converting A lambda refrence to a Cattamand
+     * @param lambda The now Serializable lambda from the fromMethods which were used to allow the user to easily pass like regular lambda
+     * @return The completed Cattamand, permissions default to 'op' and name to the name of the method
+     */
     private static LiteralCattamand fromMethodBase(Serializable lambda) {
         try {
             var methodData = LambdaInterpreter.getMethodFromlambda(lambda);

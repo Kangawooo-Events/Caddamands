@@ -14,6 +14,16 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class LambdaInterpreter {
 
+
+    /**
+     * Returns a pair of Object and Method from a lambda reference
+     * @param lambdaMethod
+     * @return Pair of Object + Method, object instance of class (null if static), and Method being refrenced by lambda
+     * @throws NoSuchMethodException
+     * @throws InvocationTargetException
+     * @throws IllegalAccessException
+     * @throws ClassNotFoundException
+     */
     public static Pair<Object, Method> getMethodFromlambda(Serializable lambdaMethod) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException {
         //get the method data from the lambda
         Method writeReplace = lambdaMethod.getClass().getDeclaredMethod("writeReplace");
@@ -21,7 +31,7 @@ public class LambdaInterpreter {
         SerializedLambda lambdaData = (SerializedLambda)writeReplace.invoke(lambdaMethod);
 
         //get the first argument which is the instance of the class it's being called on, or null if this would be static
-        Object callingObj = lambdaData.getCapturedArgCount() > 0 ? lambdaData.getCapturedArg(0) : null;
+        Object callingObj = lambdaData.getImplMethodKind() != 6 ? lambdaData.getCapturedArg(0) : null;
 
         //find the method being called
 

@@ -23,8 +23,10 @@ public class Cattarameter
     Command<CommandSourceStack> executes;
 
 
-    //to prevent overload clashes with constructors
     @FunctionalInterface
+    /**
+     * to prevent overload clashes with constructors
+     */
     public interface GenericSuggestions {
         Object get(CommandContext<CommandSourceStack> ctx);
     };

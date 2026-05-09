@@ -17,6 +17,12 @@ import java.util.function.BiFunction;
 
 public class UltResolve {
 
+    /**
+     * Resolve the InterperetedCattarameter into an Object of it's class type (e.g. StringArgumentType -> String)
+     * @param ctx Command Context
+     * @param arg Argument to resolve
+     * @return Object of Resolved class
+     */
     public static Object resolve(CommandContext<CommandSourceStack> ctx, InterperetedCattarameter arg)
     {
         if(!(arg.getType().getClass().getGenericInterfaces()[0] instanceof ParameterizedType paramType))

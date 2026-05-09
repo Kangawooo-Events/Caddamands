@@ -4,14 +4,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Caddamands extends JavaPlugin {
 
-    @Override
-    public void onEnable() {
-        // Plugin startup logic
+    /* While this is a plugin for easy dependency management,
+    * it may as well be a library. */
 
-    }
-
-    @Override
-    public void onDisable() {
-        // Plugin shutdown logic
-    }
 }

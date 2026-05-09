@@ -18,64 +18,84 @@ import java.util.List;
 @SuppressWarnings("UnstableApiUsage")
 public class ArgumentHelper {
 
-    /**
-     *
-     * Easily resolves a list of players from a provided "Players" argument
-     * @param argName name of the arguemnt to resolve
-     * @param ctx context of the command
-     * @return List of players
-     */
-    public static List<Player> getPlayersFromArgs(String argName, CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException
-    {
-        return ctx.getArgument(argName, PlayerSelectorArgumentResolver.class).resolve(ctx.getSource());
-    }
+    //region Resolving Helpers
 
-    /**
-     *
-     * Gets the world the sender is in or throws a command syntax error and sends the error message if not sent from a
-     * player or block
-     *
-     * @param ctx context of the command
-     * @return world the sender is in
-     */
-    public static World getWorldOfSender(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        CommandSender sender = ctx.getSource().getSender();
+    /*=================================================================================================
+                    -  Resolving Helpers  -
+    =================================================================================================*/
 
-        if((sender instanceof Player player))
+        /**
+         *
+         * Easily resolves a list of players from a provided "Players" argument
+         * @param argName name of the arguemnt to resolve
+         * @param ctx context of the command
+         * @return List of players
+         */
+        public static List<Player> getPlayersFromArgs(String argName, CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException
         {
-            return player.getWorld();
+            return ctx.getArgument(argName, PlayerSelectorArgumentResolver.class).resolve(ctx.getSource());
         }
-        else if((sender instanceof BlockCommandSender block))
-        {
-            return block.getBlock().getWorld();
-        }
-        else
-        {
-            throw new SimpleCommandExceptionType(MessageComponentSerializer.message().serialize(
-                    Component.text("Must be sent by a player or use the world parameter", NamedTextColor.RED)
-            )).create();
-        }
-    }
 
-    /**
-     *
-     * Gets the player who sent this command or throws a command syntax error and sends the error message if not sent from a
-     * player
-     * @param ctx context of the command
-     * @return sending player
-     */
-    public static Player getPlayerSender(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        CommandSender sender = ctx.getSource().getSender();
+    //endregion
 
-        if((sender instanceof Player player))
-        {
-            return player;
+
+    //region Sender Helpers
+
+    /*=================================================================================================
+                    -  Sender Helpers  -
+    =================================================================================================*/
+
+        /**
+         *
+         * Gets the world the sender is in or throws a command syntax error and sends the error message if not sent from a
+         * player or block
+         *
+         * @param ctx context of the command
+         * @return world the sender is in
+         */
+        public static World getWorldOfSender(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+            CommandSender sender = ctx.getSource().getSender();
+
+            if((sender instanceof Player player))
+            {
+                return player.getWorld();
+            }
+            else if((sender instanceof BlockCommandSender block))
+            {
+                return block.getBlock().getWorld();
+            }
+            else
+            {
+                throw new SimpleCommandExceptionType(MessageComponentSerializer.message().serialize(
+                        Component.text("Must be sent by a player or use the world parameter", NamedTextColor.RED)
+                )).create();
+            }
         }
-        else
-        {
-            throw new SimpleCommandExceptionType(MessageComponentSerializer.message().serialize(
-                    Component.text("Must be sent by a player", NamedTextColor.RED)
-            )).create();
+
+
+
+        /**
+         *
+         * Gets the player who sent this command or throws a command syntax error and sends the error message if not sent from a
+         * player
+         * @param ctx context of the command
+         * @return sending player
+         */
+        public static Player getPlayerSender(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+            CommandSender sender = ctx.getSource().getSender();
+
+            if((sender instanceof Player player))
+            {
+                return player;
+            }
+            else
+            {
+                throw new SimpleCommandExceptionType(MessageComponentSerializer.message().serialize(
+                        Component.text("Must be sent by a player", NamedTextColor.RED)
+                )).create();
+            }
         }
-    }
+
+    //endregion
+
 }

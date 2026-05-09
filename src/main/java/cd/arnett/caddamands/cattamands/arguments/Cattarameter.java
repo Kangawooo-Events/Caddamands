@@ -15,13 +15,28 @@ import java.util.function.Function;
 
 public class Cattarameter
 {
-    String name;
-    ArgumentType<?> type;
-    Map<String, String> literalSuggestions;
-    Function<CommandContext<CommandSourceStack>, Map<String, String>> lambdaSuggestions;
-    boolean doDefaultSuggestions;
-    Command<CommandSourceStack> executes;
 
+    //region Properties
+
+    /*=================================================================================================
+                    -  Properties  -
+    =================================================================================================*/
+
+        String name;
+        ArgumentType<?> type;
+        Map<String, String> literalSuggestions;
+        Function<CommandContext<CommandSourceStack>, Map<String, String>> lambdaSuggestions;
+        boolean doDefaultSuggestions;
+        Command<CommandSourceStack> executes;
+
+    //endregion
+
+
+    //region Constructors
+
+    /*=================================================================================================
+                    -  Constructors  -
+    =================================================================================================*/
 
     @FunctionalInterface
     /**
@@ -182,7 +197,47 @@ public class Cattarameter
         }
     }
 
+    //endregion
 
+
+    //region Properties
+
+    /*=================================================================================================
+                    -  Properties  -
+    =================================================================================================*/
+
+
+    /**
+     * @return Name of the Argument
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @return ArgumentType of the arugment
+     */
+    public ArgumentType<?> getType() {
+        return type;
+    }
+
+
+    /**
+     * @return Optional Executing function for this argument
+     */
+    public Command<CommandSourceStack> getExecutes()
+    {
+        return executes;
+    }
+
+    //endregion
+
+
+    //region Suggestions
+
+    /*=================================================================================================
+                    -  Suggestions  -
+    =================================================================================================*/
 
 
     public Map<String, String> getSuggestions(CommandContext<CommandSourceStack> ctx)
@@ -213,19 +268,6 @@ public class Cattarameter
         return suggestionMap;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public ArgumentType<?> getType() {
-        return type;
-    }
-
-
-    public Command<CommandSourceStack> getExecutes()
-    {
-        return executes;
-    }
-
+    //endregion
 
 }

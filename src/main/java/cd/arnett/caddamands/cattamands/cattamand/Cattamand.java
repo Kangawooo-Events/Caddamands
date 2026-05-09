@@ -13,6 +13,7 @@ import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.command.brigadier.MessageComponentSerializer;
 import io.papermc.paper.plugin.lifecycle.event.registrar.ReloadableRegistrarEvent;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
+import me.lucko.spark.paper.lib.protobuf.ExperimentalApi;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -23,95 +24,158 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 @SuppressWarnings("UnstableApiUsage")
 public abstract class Cattamand {
 
-    //the function that gets called for execution
-    //only called if this is the last executor in the command stack
-    public abstract int execute(CommandContext<CommandSourceStack> context) throws CommandSyntaxException;
+    //region Abstract Properties
 
+    /*=================================================================================================
+                    -  Abstract Properties  -
+    =================================================================================================*/
+
+        /**
+         * Defines the execution of the command
+         * @param context command context
+         * @return success/fail (see Command.SingleSuccess)
+         */
+        public abstract int execute(CommandContext<CommandSourceStack> context) throws CommandSyntaxException;
+
+        /**
+         * @return List of all the children for this cattamand
+         */
+        public abstract List<? extends Cattamand> getChildren();
+
+        /**
+         * @return List of Arguments this command requires
+         */
+        public abstract List<? extends Cattarameter> getArguments();
+
+        /**
+         * @return Name of the command
+         */
+        public abstract String getName();
+
+        /**
+         * @return String Permission required to use the command, see hasPermission for more detail
+         */
+        public abstract String getPermission();
+
+        /**
+         * @return List of String Aliases for this cattamand
+         */
+        public abstract List<String> getAliases();
+
+    //endregion
+
+
+    //region Optional Properties
+
+    /*=================================================================================================
+                    -  Optional Properties  -
+    =================================================================================================*/
+
+    /**
+     * Helper to determine whether this command does an execution
+     * @return Whether this command executes anything
+     */
     public boolean doExecute()
     {
         return true;
     }
 
-    // list of all the children of the branch
-    // if instantiated with a list this is not used
-    public abstract List<? extends Cattamand> getChildren();
-
-    //the list of arguments needed to be passed
-    public abstract <T extends Cattarameter> List<T> getArguments();
-
-    //name of the command
-    public abstract String getName();
-
-    //permission required to use the command
-    //see hasPermission for more detail
-    public abstract String getPermission();
-
-    public abstract List<String> getAliases();
-
+    /**
+     * @return Optional Redirect (NOT TESTED)
+     */
+    @ExperimentalApi
     public Cattamand getRedirect()
     {
         return null;
     }
 
-    //description of what the command does (for documentation)
+    /**
+     * @return description of what the command does for documentation, which means optional :)
+     */
     public String getDescription()
     {
         return "";
     }
 
-    // if the user wants to have a different permission system than paper's
-    // (like check if the sender has an item on them) they can override this to do that
-    // otherwise is just used to check if the player has the permission in getPermission()
+    //endregion
+
+
+    //region Permissions
+
+    /*=================================================================================================
+                    -  Permissions  -
+    =================================================================================================*/
+
+
+    /**
+     * gets the permission predicate, defaults to FALSE result if not set/overridden
+     * @return this
+     */
+    public Predicate<CommandSourceStack> getPermissionPredicate()
+    {
+        return (CommandSourceStack css) -> false;
+    }
+
+
+    /**
+     * Does the user have permission to run this command?
+     * First check the permission string and if not allowed
+     * checks the permission predicate if applicable ()
+     * @param css Command source stack
+     * @return true / false
+     */
     public boolean hasPermission(CommandSourceStack css)
     {
         //if permission is "op" that is a special case so we can check that here
-        switch (getPermission().toLowerCase())
+        if(switch (getPermission().toLowerCase())
         {
             //op check
-            case "op", "" -> {
-                return css.getSender().isOp();
-            }
-
+            case "op", "" -> css.getSender().isOp();
             //no permission needed
-            case "none", "no", "n/a" -> {
-                return true;
-            }
-
+            case "none", "no", "n/a" -> true;
             //regular permission check
-            default -> {
-                return css.getSender().hasPermission(getPermission());
-            }
+            default -> css.getSender().hasPermission(getPermission());
+        })
+        {
+            return true;
         }
+
+        //then predicate check to see if they meet that, default to false
+        if(getPermissionPredicate() != null)
+            return getPermissionPredicate().test(css);
+
+        //there is no predicate to test (the user just wants a string permission check which already failed)
+        else
+            return false;
     }
 
-    //syntax of how to use the command (for documentation)
-    public String getSyntax()
-    {
-        StringBuilder out = new StringBuilder("/");
-
-        out.append(getName()).append(" ");
-
-        //go through each argument and add it to the command
-        getArguments().forEach(argumentData -> {
-            out.append(argumentData.getName()).append(" ");
-        });
-
-        return out.toString();
-    }
+    //endregion
 
 
-    //gets the command for use in a tree (ex// Commands.literal("rootcmd").then(new LeadCommand().getCommand())...)
+    //region Building Brigadier Nodes
+
+    /*=================================================================================================
+                    -  Building Brigadier Nodes  -
+    =================================================================================================*/
+
+
+    /**
+     * Builds the commmand for use in Brigadier API
+     * (ex// Commands.literal("rootcmd").then(new LeadCommand().getCommand())...)
+     * @return the cattamand to a brigader node
+     */
     public final LiteralArgumentBuilder<CommandSourceStack> toArgBuilder()
     {
         // check permissions
         var rootCommand = Commands.literal(getName()).requires(this::hasPermission);
 
         //grab args once in case someone's overridden it to make there be some logic run here
-        List<Cattarameter> arguments = getArguments();
+        List<? extends Cattarameter> arguments = getArguments();
 
         //set the redirection then exit because it shouldn't have any args or children or executor
         if(getRedirect() != null)
@@ -121,59 +185,21 @@ public abstract class Cattamand {
         }
 
         //add the main arg/executor
-        attachArgsExecution(rootCommand, arguments, doExecute()? this::execute : null);
+        attachArgsExecution(rootCommand);
 
         return rootCommand;
     }
 
-    //registers ONLY this command, nothing above it in the tree
-    public LiteralCommandNode<CommandSourceStack> registerAsRoot(JavaPlugin plugin)
+
+    /**
+     * Attaches the arguments and Execution to a root Brigader command node,
+     * Children are then attached to the LAST argument (or root node)
+     * @param rootCommand Root command node
+     */
+    void attachArgsExecution(LiteralArgumentBuilder<CommandSourceStack> rootCommand)
     {
-        registerAsRoot(plugin, 0);
-        return toArgBuilder().build();
-    }
-
-    //registers ONLY this command, nothing above it in the tree
-    public void registerAsRoot(JavaPlugin plugin, int priority)
-    {
-        plugin.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS.newHandler(cmd -> {
-            registerAsRoot(plugin, cmd);
-        }).priority(priority));
-    }
-
-    //registers ONLY this command, nothing above it in the tree
-    public LiteralCommandNode<CommandSourceStack> registerAsRoot(JavaPlugin plugin, ReloadableRegistrarEvent<Commands> cmd)
-    {
-        plugin.getLogger().info("registering " + this.getName() + " command");
-
-        var node = toArgBuilder().build();
-
-        cmd.registrar().register(node);
-
-        //register any of it's aliases
-        getAliases().forEach(alias -> {
-            //get the builder for the alias node
-            LiteralArgumentBuilder<CommandSourceStack> aliasBuilder = Commands.literal(alias).redirect(node).requires(this::hasPermission);
-
-            //if the alias has an executor attach that since sometimes this can cause an error
-            //(which was fun having to figure out)
-            if(node.getCommand() != null)
-                aliasBuilder.executes(node.getCommand());
-
-            cmd.registrar().register(aliasBuilder.build());
-        });
-
-        if(!Bukkit.getOnlinePlayers().isEmpty())
-        {
-            Bukkit.getOnlinePlayers().forEach(Player::updateCommands);
-        }
-
-        return node;
-    }
-
-
-    void attachArgsExecution(LiteralArgumentBuilder<CommandSourceStack> rootCommand, List<Cattarameter> arguments, Command<CommandSourceStack> executor)
-    {
+        List<? extends Cattarameter> arguments = getArguments();
+        Command<CommandSourceStack> executor = doExecute()? this::execute : null;
         boolean rootExecutionApplied = false;
         boolean childrenApplied = false;
 
@@ -243,7 +269,7 @@ public abstract class Cattamand {
             else
             {
                 //bad syntax so throw the syntax at them and tell them to do better
-                arg.executes(getSyntaxErrorMessage(arguments));
+                arg.executes(getSyntaxErrorMessage());
             }
 
             //if we are at the last argument then attach it to the root
@@ -264,7 +290,7 @@ public abstract class Cattamand {
         }
         else
         {
-            rootCommand.executes(getSyntaxErrorMessage(arguments));
+            rootCommand.executes(getSyntaxErrorMessage());
         }
 
         if(!childrenApplied)
@@ -274,6 +300,11 @@ public abstract class Cattamand {
         }
     }
 
+    /**
+     * Attaches the children of this Cattamand to a Brigader command node,
+     * Children are attached AFTER Arguments
+     * @param parent Parent command node
+     */
     void addChildrenToNode(ArgumentBuilder<CommandSourceStack, ?> parent)
     {
         List<? extends Cattamand> children = getChildren();
@@ -302,13 +333,122 @@ public abstract class Cattamand {
         }
     }
 
-    Command<CommandSourceStack> getSyntaxErrorMessage(List<Cattarameter> arguments)
+    //endregion
+
+
+    //region Command Registration
+
+    /*=================================================================================================
+                    -  Command Registration  -
+    =================================================================================================*/
+
+    /**
+     * Registers ONLY this Cattamand as a root command with its children as branches/leaves, nothing above it in the tree
+     * @param plugin the owning plugin of the command
+     * @return The compiled command node (usually not important)
+     */
+    public LiteralCommandNode<CommandSourceStack> registerAsRoot(JavaPlugin plugin)
+    {
+        registerAsRoot(plugin, 0);
+        return toArgBuilder().build();
+    }
+
+    /**
+     * Registers ONLY this Cattamand as a root command with its children as branches/leaves, nothing above it in the tree
+     * @param plugin the owning plugin of the command
+     * @param priority the priority to register the command with
+     */
+    //registers ONLY this command, nothing above it in the tree
+    public void registerAsRoot(JavaPlugin plugin, int priority)
+    {
+        plugin.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS.newHandler(cmd -> {
+            registerAsRoot(plugin, cmd);
+        }).priority(priority));
+    }
+
+    /**
+     * Registers ONLY this Cattamand as a root command with its children as branches/leaves, nothing above it in the tree
+     * @param plugin the owning plugin of the command
+     * @param cmd the Registrar event to register the command with
+     */
+    public LiteralCommandNode<CommandSourceStack> registerAsRoot(JavaPlugin plugin, ReloadableRegistrarEvent<Commands> cmd)
+    {
+        plugin.getLogger().info("registering " + this.getName() + " command");
+
+        var node = toArgBuilder().build();
+
+        cmd.registrar().register(node);
+
+        //register any of it's aliases
+        getAliases().forEach(alias -> {
+            //get the builder for the alias node
+            LiteralArgumentBuilder<CommandSourceStack> aliasBuilder = Commands.literal(alias).redirect(node).requires(this::hasPermission);
+
+            //if the alias has an executor attach that since sometimes this can cause an error
+            //(which was fun having to figure out)
+            if(node.getCommand() != null)
+                aliasBuilder.executes(node.getCommand());
+
+            cmd.registrar().register(aliasBuilder.build());
+        });
+
+        if(!Bukkit.getOnlinePlayers().isEmpty())
+        {
+            Bukkit.getOnlinePlayers().forEach(Player::updateCommands);
+        }
+
+        return node;
+    }
+
+    //endregion
+
+
+    //region Syntax
+
+    /*=================================================================================================
+                    -  Syntax  -
+    =================================================================================================*/
+
+    /**
+     * @return syntax of how to use the command (for documentation), auto generated
+     */
+    public String getSyntax()
+    {
+        StringBuilder out = new StringBuilder("/");
+
+        out.append(getName()).append(" ");
+
+        //go through each argument and add it to the command
+        getArguments().forEach(argumentData -> {
+            if(argumentData.getExecutes() != null)
+            {
+                //label it as executable
+                out
+                        .append('[')
+                        .append(argumentData.getName())
+                        .append(']')
+                        .append(" ");
+            }
+            else
+            {
+                out.append(argumentData.getName()).append(" ");
+            }
+        });
+
+        return out.toString();
+    }
+
+    /**
+     * Returns an auto generated Syntax error message command execution
+     * @return Command execution to send player error message
+     */
+    Command<CommandSourceStack> getSyntaxErrorMessage()
     {
         return context -> {//compile parameters
             StringBuilder builder = new StringBuilder("/... ");
             builder.append(getName()).append(" ");
 
-            arguments.forEach(argument -> {
+            getArguments().forEach(argument -> {
                 builder.append("<").append(argument.getName()).append("> ");
             });
 
@@ -321,4 +461,6 @@ public abstract class Cattamand {
             return 1;
         };
     }
+
+    //endregion
 }

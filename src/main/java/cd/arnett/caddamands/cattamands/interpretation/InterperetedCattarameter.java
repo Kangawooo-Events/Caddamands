@@ -12,8 +12,12 @@ import java.util.function.Function;
 
 public class InterperetedCattarameter extends Cattarameter
 {
-    //used specifically for telling if the user wants List<Player> or just Player because ArgumentType.player(s) both use the same class
-    public boolean isSingle = true;
+
+    //region Constructors
+
+    /*=================================================================================================
+                    -  Constructors  -
+    =================================================================================================*/
 
     protected InterperetedCattarameter(String name, ArgumentType<?> type) {
         this(name, type, Map.of());
@@ -55,6 +59,26 @@ public class InterperetedCattarameter extends Cattarameter
         super(name, type, literalSuggestions, lambdaSuggestions, doDefaultSuggestions, executes);
     }
 
+    //endregion
+
+
+    //region Properties
+
+    /*=================================================================================================
+                    -  Properties  -
+    =================================================================================================*/
+
+    //used specifically for telling if the user wants List<Player> or just Player because ArgumentType.player(s) both use the same class
+    public boolean isSingle = true;
+
+    //endregion
+
+
+    //region Settings
+
+    /*=================================================================================================
+                    -  Setters  -
+    =================================================================================================*/
 
     /**
      * Whether the argument type is for a single object e.g. (PlayerArgumentType (Player) vs PlayersArgumentType (List<Player>))
@@ -66,4 +90,8 @@ public class InterperetedCattarameter extends Cattarameter
         isSingle = single;
         return this;
     }
+
+    //endregion
+
+
 }

@@ -36,19 +36,23 @@ public abstract class Cattamand {
     =================================================================================================*/
 
         /**
-         * Defines the execution of the command
+         * Defines the execution of the command <br>
+         * Execution will be attached to LAST argument WITHOUT its own execution
+         * if none are present, it will be assigned to the root node.
          * @param context command context
          * @return success/fail (see Command.SingleSuccess)
          */
         public abstract int execute(CommandContext<CommandSourceStack> context) throws CommandSyntaxException;
 
         /**
-         * @return List of all the children for this cattamand
+         * @return List of all the children for this cattamand <br>
+         * If arguments and children are present, Children are added to the LAST argument node
          */
         public abstract List<? extends Cattamand> getChildren();
 
         /**
-         * @return List of Arguments this command requires
+         * @return List of Arguments this command requires <br>
+         * If arguments and children are present, Children are added to the LAST argument node
          */
         public abstract List<? extends Cattarameter> getArguments();
 

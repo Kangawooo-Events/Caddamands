@@ -84,7 +84,8 @@ public class LiteralCattamand extends Cattamand {
         }
 
         /**
-         * Sets the execution function for this command
+         * Sets the execution function for this command <br>
+         * Execution will be attached to LAST argument WITHOUT its own execution
          * @param executes Execution function (must be in
          *                 "int foo(CommandContext&ltCommandSourceStack&gt context) throws CommandSyntaxException"
          *                 format)
@@ -97,7 +98,8 @@ public class LiteralCattamand extends Cattamand {
         }
 
         /**
-         * Sets the Argument nodes for this Cattamand
+         * Sets the Argument nodes for this Cattamand <br>
+         * If arguments and children are present, Children are added to the LAST argument node
          * @param arguments List of Arguments
          * @return this
          */
@@ -108,7 +110,8 @@ public class LiteralCattamand extends Cattamand {
         }
 
         /**
-         * Sets the child nodes of the command
+         * Sets the child nodes of the command <br>
+         * If arguments and children are present, Children are added to the LAST argument node
          * @param children List of Child Cattamands
          * @return this
          */

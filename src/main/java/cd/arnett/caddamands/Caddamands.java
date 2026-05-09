@@ -2,9 +2,21 @@ package cd.arnett.caddamands;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.logging.Logger;
+
 public final class Caddamands extends JavaPlugin {
 
-    /* While this is a plugin for easy dependency management,
-    * it may as well be a library. */
+    /**
+     * Logger used for errors & testing or other things
+     */
+    public static Logger logger;
+
+
+    @Override
+    public void onEnable()
+    {
+        //set the logger for easy logging
+        logger = getLogger();
+    }
 
 }

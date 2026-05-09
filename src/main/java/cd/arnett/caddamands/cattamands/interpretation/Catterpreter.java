@@ -1,5 +1,6 @@
 package cd.arnett.caddamands.cattamands.interpretation;
 
+import cd.arnett.caddamands.Caddamands;
 import cd.arnett.caddamands.cattamands.cattamand.Cattamand;
 import cd.arnett.caddamands.cattamands.cattamand.LiteralCattamand;
 import cd.arnett.caddamands.cattamands.interpretation.annotations.Catterpret;
@@ -186,15 +187,9 @@ public class Catterpreter {
         boolean hasLeadingCtx = argTypes.length > 0 &&
                 argTypes[0] instanceof ParameterizedType part && part.getRawType().equals(CommandContext.class);
 
-        for(Type type : argTypes)
-        {
-            System.out.println(type.getTypeName());
-        }
-
         //if it has a leading ctx then chop that off
         if(hasLeadingCtx)
         {
-            System.out.println("leading ctx");
             argTypes = Arrays.stream(argTypes).skip(1).toArray(Type[]::new);
             parameters = Arrays.stream(parameters).skip(1).toArray(Parameter[]::new);
         }
@@ -247,9 +242,6 @@ public class Catterpreter {
                 else {
                     resolvedArgs = Arrays.stream(args).map(arg -> {return resolve(ctx, arg);}).toArray();
                 }
-
-                System.out.println(Arrays.toString(Arrays.stream(resolvedArgs).map(Object::getClass).map(Class::toString).toArray()));
-                System.out.println(Arrays.toString(Arrays.stream(method.getParameters()).map(Parameter::toString).toArray()));
 
                 method.invoke(instance, resolvedArgs);
 

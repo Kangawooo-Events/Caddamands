@@ -1,5 +1,6 @@
 package cd.arnett.caddamands;
 
+import cd.arnett.caddamands.cattamands.interpretation.Catterpreter;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Logger;
@@ -18,5 +19,4 @@ public final class Caddamands extends JavaPlugin {
         //set the logger for easy logging
         logger = getLogger();
     }
-
 }

@@ -45,12 +45,6 @@ public abstract class Cattamand {
         public abstract int execute(CommandContext<CommandSourceStack> context) throws CommandSyntaxException;
 
         /**
-         * @return List of all the children for this cattamand <br>
-         * If arguments and children are present, Children are added to the LAST argument node
-         */
-        public abstract List<? extends Cattamand> getChildren();
-
-        /**
          * @return List of Arguments this command requires <br>
          * If arguments and children are present, Children are added to the LAST argument node
          */
@@ -79,6 +73,12 @@ public abstract class Cattamand {
     /*=================================================================================================
                     -  Optional Properties  -
     =================================================================================================*/
+
+    /**
+     * @return List of all the children for this cattamand <br>
+     * If arguments and children are present, Children are added to the LAST argument node
+     */
+    public List<? extends Cattamand> getChildren() {return List.of();}
 
     /**
      * Helper to determine whether this command does an execution

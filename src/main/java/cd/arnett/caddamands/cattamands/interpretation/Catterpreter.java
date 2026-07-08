@@ -1,6 +1,5 @@
 package cd.arnett.caddamands.cattamands.interpretation;
 
-import cd.arnett.caddamands.Caddamands;
 import cd.arnett.caddamands.cattamands.cattamand.Cattamand;
 import cd.arnett.caddamands.cattamands.cattamand.LiteralCattamand;
 import cd.arnett.caddamands.cattamands.interpretation.annotations.Catterpret;
@@ -299,55 +298,55 @@ public class Catterpreter {
      * @param s SerializableLambda referencing method with (0 parameters)
      * @return The completed Cattamand, permissions default to 'op' and name to the name of the method
      */
-    private static LiteralCattamand fromMethod(S0 s) { return fromMethodBase(s); }
+    public static LiteralCattamand fromMethod(S0 s) { return fromMethodBase(s); }
     /**
      * Converts a Method into a Literal Cattamand, using any annotation info provided (see @Catterpret/@Paramatter)
      * @param s SerializableLambda referencing method with (1 parameter)
      * @return The completed Cattamand, permissions default to 'op' and name to the name of the method
      */
-    private static <A> LiteralCattamand fromMethod(S1<A> s) { return fromMethodBase(s); }
+    public static <A> LiteralCattamand fromMethod(S1<A> s) { return fromMethodBase(s); }
     /**
      * Converts a Method into a Literal Cattamand, using any annotation info provided (see @Catterpret/@Paramatter)
      * @param s SerializableLambda referencing method with (2 parameters)
      * @return The completed Cattamand, permissions default to 'op' and name to the name of the method
      */
-    private static <A, B> LiteralCattamand fromMethod(S2<A, B> s) { return fromMethodBase(s); }
+    public static <A, B> LiteralCattamand fromMethod(S2<A, B> s) { return fromMethodBase(s); }
     /**
      * Converts a Method into a Literal Cattamand, using any annotation info provided (see @Catterpret/@Paramatter)
      * @param s SerializableLambda referencing method with (3 parameters)
      * @return The completed Cattamand, permissions default to 'op' and name to the name of the method
      */
-    private static <A, B, C> LiteralCattamand fromMethod(S3<A, B, C> s) { return fromMethodBase(s); }
+    public static <A, B, C> LiteralCattamand fromMethod(S3<A, B, C> s) { return fromMethodBase(s); }
     /**
      * Converts a Method into a Literal Cattamand, using any annotation info provided (see @Catterpret/@Paramatter)
      * @param s SerializableLambda referencing method with (4 parameters)
      * @return The completed Cattamand, permissions default to 'op' and name to the name of the method
      */
-    private static <A, B, C, D> LiteralCattamand fromMethod(S4<A, B, C, D> s) { return fromMethodBase(s); }
+    public static <A, B, C, D> LiteralCattamand fromMethod(S4<A, B, C, D> s) { return fromMethodBase(s); }
     /**
      * Converts a Method into a Literal Cattamand, using any annotation info provided (see @Catterpret/@Paramatter)
      * @param s SerializableLambda referencing method with (5 parameters)
      * @return The completed Cattamand, permissions default to 'op' and name to the name of the method
      */
-    private static <A, B, C, D, E> LiteralCattamand fromMethod(S5<A, B, C, D, E> s) { return fromMethodBase(s); }
+    public static <A, B, C, D, E> LiteralCattamand fromMethod(S5<A, B, C, D, E> s) { return fromMethodBase(s); }
     /**
      * Converts a Method into a Literal Cattamand, using any annotation info provided (see @Catterpret/@Paramatter)
      * @param s SerializableLambda referencing method with (6 parameters)
      * @return The completed Cattamand, permissions default to 'op' and name to the name of the method
      */
-    private static <A, B, C, D, E, F> LiteralCattamand fromMethod(S6<A, B, C, D, E, F> s) { return fromMethodBase(s); }
+    public static <A, B, C, D, E, F> LiteralCattamand fromMethod(S6<A, B, C, D, E, F> s) { return fromMethodBase(s); }
     /**
      * Converts a Method into a Literal Cattamand, using any annotation info provided (see @Catterpret/@Paramatter)
      * @param s SerializableLambda referencing method with (7 parameters)
      * @return The completed Cattamand, permissions default to 'op' and name to the name of the method
      */
-    private static <A, B, C, D, E, F, G> LiteralCattamand fromMethod(S7<A, B, C, D, E, F, G> s) { return fromMethodBase(s); }
+    public static <A, B, C, D, E, F, G> LiteralCattamand fromMethod(S7<A, B, C, D, E, F, G> s) { return fromMethodBase(s); }
     /**
      * Converts a Method into a Literal Cattamand, using any annotation info provided (see @Catterpret/@Paramatter)
      * @param s SerializableLambda referencing method with (8 parameters)
      * @return The completed Cattamand, permissions default to 'op' and name to the name of the method
      */
-    private static <A, B, C, D, E, F, G, H> LiteralCattamand fromMethod(S8<A, B, C, D, E, F, G, H> s) { return fromMethodBase(s); }
+    public static <A, B, C, D, E, F, G, H> LiteralCattamand fromMethod(S8<A, B, C, D, E, F, G, H> s) { return fromMethodBase(s); }
 
     /**
      * The base function for converting A lambda refrence to a Cattamand
@@ -356,7 +355,7 @@ public class Catterpreter {
      */
     private static LiteralCattamand fromMethodBase(Serializable lambda) {
         try {
-            var methodData = getMethodFromlambda(lambda);
+            var methodData = getMethodFromLambda(lambda);
             return fromMethod(methodData.left(), methodData.right());
         }
         catch (Exception e)
@@ -378,7 +377,7 @@ public class Catterpreter {
      * @throws IllegalAccessException
      * @throws ClassNotFoundException
      */
-    public static Pair<Object, Method> getMethodFromlambda(Serializable lambdaMethod) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException {
+    private static Pair<Object, Method> getMethodFromLambda(Serializable lambdaMethod) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException {
         //get the method data from the lambda
         Method writeReplace = lambdaMethod.getClass().getDeclaredMethod("writeReplace");
         writeReplace.setAccessible(true);

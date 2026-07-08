@@ -68,7 +68,7 @@ publishing {
         mavenJava(MavenPublication) {
             groupId = 'cd.arnett'
             artifactId = 'caddamands'
-            version = '3.A.2'
+            version = '3.A.4'
             from components.java
         }
     }

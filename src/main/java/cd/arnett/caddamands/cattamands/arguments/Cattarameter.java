@@ -3,11 +3,8 @@ package cd.arnett.caddamands.cattamands.arguments;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandExceptionType;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 
-import javax.swing.plaf.InsetsUIResource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,12 +45,7 @@ public class Cattarameter
 
     public static Cattarameter of(String name, ArgumentType<?> type)
     {
-        return of(name, type, List.of(), true);
-    }
-
-    public static Cattarameter of(String name, ArgumentType<?> type, String literalSuggestions)
-    {
-        return of(name, type, List.of(literalSuggestions));
+        return of(name, type, List.of());
     }
 
     public static Cattarameter of(String name, ArgumentType<?> type, List<String> literalSuggestions)
@@ -63,52 +55,12 @@ public class Cattarameter
 
     public static Cattarameter of(String name, ArgumentType<?> type, Map<String, String> literalSuggestions)
     {
-        return of(name, type, literalSuggestions, null, false);
+        return of(name, type, literalSuggestions, null);
     }
 
     public static Cattarameter of(String name, ArgumentType<?> type, GenericSuggestions lambdaSuggestions)
     {
-        return of(name, type, Map.of(), lambdaSuggestions, false);
-    }
-
-    public static Cattarameter of(String name, ArgumentType<?> type, boolean doDefaultSuggestions)
-    {
-        return of(name, type, List.of(), doDefaultSuggestions);
-    }
-
-    public static Cattarameter of(String name, ArgumentType<?> type, String literalSuggestions, boolean doDefaultSuggestions)
-    {
-        return of(name, type, List.of(literalSuggestions), doDefaultSuggestions);
-    }
-
-    public static Cattarameter of(String name, ArgumentType<?> type, List<String> literalSuggestions, boolean doDefaultSuggestions)
-    {
-        return of(name, type, convertListToMap(literalSuggestions), doDefaultSuggestions);
-    }
-
-    public static Cattarameter of(String name, ArgumentType<?> type, Map<String, String> literalSuggestions, boolean doDefaultSuggestions)
-    {
-        return of(name, type, literalSuggestions, null, doDefaultSuggestions);
-    }
-
-    public static Cattarameter of(String name, ArgumentType<?> type, GenericSuggestions lambdaSuggestions, boolean doDefaultSuggestions)
-    {
-        return of(name, type, Map.of(), lambdaSuggestions, doDefaultSuggestions);
-    }
-
-    public static Cattarameter of(String name, ArgumentType<?> type, Map<String, String> literalSuggestions, GenericSuggestions lambdaSuggestions, boolean doDefaultSuggestions)
-    {
-        return new Cattarameter(name, type, literalSuggestions, lambdaSuggestions, doDefaultSuggestions, null);
-    }
-
-    public static Cattarameter of(String name, ArgumentType<?> type, Command<CommandSourceStack> executes)
-    {
-        return of(name, type, List.of(), true, executes);
-    }
-
-    public static Cattarameter of(String name, ArgumentType<?> type, String literalSuggestions, Command<CommandSourceStack> executes)
-    {
-        return of(name, type, List.of(literalSuggestions), executes);
+        return of(name, type, Map.of(), lambdaSuggestions, null);
     }
 
     public static Cattarameter of(String name, ArgumentType<?> type, List<String> literalSuggestions, Command<CommandSourceStack> executes)
@@ -118,50 +70,25 @@ public class Cattarameter
 
     public static Cattarameter of(String name, ArgumentType<?> type, Map<String, String> literalSuggestions, Command<CommandSourceStack> executes)
     {
-        return of(name, type, literalSuggestions, null, false, executes);
+        return of(name, type, literalSuggestions, null, executes);
     }
 
     public static Cattarameter of(String name, ArgumentType<?> type, GenericSuggestions lambdaSuggestions, Command<CommandSourceStack> executes)
     {
-        return of(name, type, Map.of(), lambdaSuggestions, false, executes);
+        return of(name, type, Map.of(), lambdaSuggestions, executes);
     }
 
-    public static Cattarameter of(String name, ArgumentType<?> type, boolean doDefaultSuggestions, Command<CommandSourceStack> executes)
+    protected static Cattarameter of(String name, ArgumentType<?> type, Map<String, String> literalSuggestions, GenericSuggestions lambdaSuggestions, Command<CommandSourceStack> executes)
     {
-        return of(name, type, List.of(), doDefaultSuggestions, executes);
+        return new Cattarameter(name, type, literalSuggestions, lambdaSuggestions, executes);
     }
 
-    public static Cattarameter of(String name, ArgumentType<?> type, String literalSuggestions, boolean doDefaultSuggestions, Command<CommandSourceStack> executes)
-    {
-        return of(name, type, List.of(literalSuggestions), doDefaultSuggestions, executes);
-    }
-
-    public static Cattarameter of(String name, ArgumentType<?> type, List<String> literalSuggestions, boolean doDefaultSuggestions, Command<CommandSourceStack> executes)
-    {
-        return of(name, type, convertListToMap(literalSuggestions), doDefaultSuggestions, executes);
-    }
-
-    public static Cattarameter of(String name, ArgumentType<?> type, Map<String, String> literalSuggestions, boolean doDefaultSuggestions, Command<CommandSourceStack> executes)
-    {
-        return of(name, type, literalSuggestions, null, doDefaultSuggestions, executes);
-    }
-
-    public static Cattarameter of(String name, ArgumentType<?> type, GenericSuggestions lambdaSuggestions, boolean doDefaultSuggestions, Command<CommandSourceStack> executes)
-    {
-        return of(name, type, Map.of(), lambdaSuggestions, doDefaultSuggestions, executes);
-    }
-
-    public static Cattarameter of(String name, ArgumentType<?> type, Map<String, String> literalSuggestions, GenericSuggestions lambdaSuggestions, boolean doDefaultSuggestions, Command<CommandSourceStack> executes)
-    {
-        return new Cattarameter(name, type, literalSuggestions, lambdaSuggestions, doDefaultSuggestions, executes);
-    }
-
-    protected Cattarameter (String name, ArgumentType<?> type, Map<String, String> literalSuggestions, GenericSuggestions lambdaSuggestions, boolean doDefaultSuggestions, Command<CommandSourceStack> executes)
+    protected Cattarameter (String name, ArgumentType<?> type, Map<String, String> literalSuggestions, GenericSuggestions lambdaSuggestions, Command<CommandSourceStack> executes)
     {
         this.name = name;
         this.type = type;
         this.literalSuggestions = literalSuggestions;
-        this.doDefaultSuggestions = doDefaultSuggestions;
+        this.doDefaultSuggestions = false;
         this.executes = executes;
 
         //differentiate between map or list of strings
@@ -228,6 +155,16 @@ public class Cattarameter
     public Command<CommandSourceStack> getExecutes()
     {
         return executes;
+    }
+
+
+    /**
+     * Option to set this argument to hide the default minecraft suggestions for the arguments type<br>
+     * i.e. showing player names when doing a player argument, Defaults to TRUE
+     */
+    public void doDefaultSuggestions(boolean doDefaultSuggestions)
+    {
+        this.doDefaultSuggestions = doDefaultSuggestions;
     }
 
     //endregion

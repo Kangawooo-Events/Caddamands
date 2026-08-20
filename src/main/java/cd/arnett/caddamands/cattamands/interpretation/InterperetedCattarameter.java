@@ -28,7 +28,7 @@ public class InterperetedCattarameter extends Cattarameter
     }
 
     protected InterperetedCattarameter(String name, ArgumentType<?> type, Map<String, String> literalSuggestions, GenericSuggestions lambdaSuggestions) {
-        this(name, type, literalSuggestions, lambdaSuggestions, false);
+        this(name, type, literalSuggestions, lambdaSuggestions, true);
     }
 
     protected InterperetedCattarameter(String name, ArgumentType<?> type, Map<String, String> literalSuggestions, boolean doDefaultSuggestions) {
@@ -36,7 +36,7 @@ public class InterperetedCattarameter extends Cattarameter
     }
 
     protected InterperetedCattarameter(String name, ArgumentType<?> type, Map<String, String> literalSuggestions, GenericSuggestions lambdaSuggestions, boolean doDefaultSuggestions) {
-        super(name, type, literalSuggestions, lambdaSuggestions, doDefaultSuggestions, null);
+        super(name, type, literalSuggestions, lambdaSuggestions, null, doDefaultSuggestions);
     }
 
     protected InterperetedCattarameter(String name, ArgumentType<?> type, Command<CommandSourceStack> executes) {
@@ -48,7 +48,7 @@ public class InterperetedCattarameter extends Cattarameter
     }
 
     protected InterperetedCattarameter(String name, ArgumentType<?> type, Map<String, String> literalSuggestions, GenericSuggestions lambdaSuggestions, Command<CommandSourceStack> executes) {
-        this(name, type, literalSuggestions, lambdaSuggestions, false, executes);
+        this(name, type, literalSuggestions, lambdaSuggestions, true, executes);
     }
 
     protected InterperetedCattarameter(String name, ArgumentType<?> type, Map<String, String> literalSuggestions, boolean doDefaultSuggestions, Command<CommandSourceStack> executes) {
@@ -56,7 +56,7 @@ public class InterperetedCattarameter extends Cattarameter
     }
 
     protected InterperetedCattarameter(String name, ArgumentType<?> type, Map<String, String> literalSuggestions, GenericSuggestions lambdaSuggestions, boolean doDefaultSuggestions, Command<CommandSourceStack> executes) {
-        super(name, type, literalSuggestions, lambdaSuggestions, doDefaultSuggestions, executes);
+        super(name, type, literalSuggestions, lambdaSuggestions, executes, doDefaultSuggestions);
     }
 
     //endregion

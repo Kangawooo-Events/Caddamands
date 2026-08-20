@@ -22,7 +22,7 @@ public class TestCommand extends Cattamand {
                 Cattarameter.of(
                         "name",
                         IntegerArgumentType.integer(),
-                        List.of(),
+                        null,
                         (ctx) -> {
                             return 1;
                         }

@@ -19,7 +19,7 @@ public class TestCommand extends Cattamand {
     @Override
     public List<? extends Cattarameter> getArguments() {
         return List.of(
-                Cattarameter.of(
+                new Cattarameter(
                         "name",
                         IntegerArgumentType.integer(),
                         null,

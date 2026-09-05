@@ -15,13 +15,6 @@ repositories {
         name = "papermc-repo"
         url = "https://repo.papermc.io/repository/maven-public/"
     }
-    maven {
-        url = uri("https://maven.pkg.github.com/kangawooo-events/caddamands")
-        credentials {
-            username = project.findProperty("github.user") as String ?: System.getenv("github.user")
-            password = project.findProperty("github.token") as String ?: System.getenv("github.token")
-        }
-    }
 }
 
 dependencies {

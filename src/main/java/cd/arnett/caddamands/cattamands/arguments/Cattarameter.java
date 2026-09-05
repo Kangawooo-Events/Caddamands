@@ -44,37 +44,37 @@ public class Cattarameter
         Object get(CommandContext<CommandSourceStack> ctx);
     };
 
-    public static Cattarameter of(String name, ArgumentType<?> type)
+    public Cattarameter (String name, ArgumentType<?> type)
     {
-        return of(name, type, List.of());
+        this(name, type, List.of());
     }
 
-    public static Cattarameter of(String name, ArgumentType<?> type, List<String> literalSuggestions)
+    public Cattarameter (String name, ArgumentType<?> type, List<String> literalSuggestions)
     {
-        return of(name, type, convertListToMap(literalSuggestions));
+        this(name, type, convertListToMap(literalSuggestions));
     }
 
-    public static Cattarameter of(String name, ArgumentType<?> type, Map<String, String> literalSuggestions)
+    public Cattarameter (String name, ArgumentType<?> type, Map<String, String> literalSuggestions)
     {
-        return new Cattarameter(name, type, literalSuggestions, null, null, true);
+        this(name, type, literalSuggestions, null, null, true);
     }
 
-    public static Cattarameter of(String name, ArgumentType<?> type, GenericSuggestions lambdaSuggestions)
+    public Cattarameter (String name, ArgumentType<?> type, GenericSuggestions lambdaSuggestions)
     {
-        return of(name, type, lambdaSuggestions,  null);
+        this(name, type, lambdaSuggestions,  null);
     }
 
-    public static Cattarameter of(String name, ArgumentType<?> type, GenericSuggestions lambdaSuggestions, Command<CommandSourceStack> executes)
+    public Cattarameter (String name, ArgumentType<?> type, GenericSuggestions lambdaSuggestions, Command<CommandSourceStack> executes)
     {
-        return new Cattarameter(name, type, Map.of(), lambdaSuggestions,executes,  true);
+        this(name, type, Map.of(), lambdaSuggestions,executes,  true);
     }
 
-    public static Cattarameter of(String name, ArgumentType<?> type,GenericSuggestions lambdaSuggestions,Command<CommandSourceStack> executes, boolean doDefaultSuggestions)
+    public Cattarameter (String name, ArgumentType<?> type,GenericSuggestions lambdaSuggestions,Command<CommandSourceStack> executes, boolean doDefaultSuggestions)
     {
-        return new Cattarameter(name, type, Map.of(), lambdaSuggestions, executes, doDefaultSuggestions);
+        this(name, type, Map.of(), lambdaSuggestions, executes, doDefaultSuggestions);
     }
 
-    protected Cattarameter (String name, ArgumentType<?> type, Map<String, String> literalSuggestions, GenericSuggestions lambdaSuggestions, Command<CommandSourceStack> executes, boolean doDefaultSuggestions)
+    public Cattarameter (String name, ArgumentType<?> type, Map<String, String> literalSuggestions, GenericSuggestions lambdaSuggestions, Command<CommandSourceStack> executes, boolean doDefaultSuggestions)
     {
         this.name = name;
         this.type = type;

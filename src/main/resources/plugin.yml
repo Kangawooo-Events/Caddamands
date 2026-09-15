@@ -4,3 +4,5 @@ main: cd.arnett.caddamands.Caddamands
 api-version: '1.21'
 authors: [ Catten, Cadden, Arnett ]
 description: Enables the easy creation of new worlds and some extra features
+
+load: STARTUP

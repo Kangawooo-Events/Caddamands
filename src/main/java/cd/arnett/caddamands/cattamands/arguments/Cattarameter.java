@@ -5,10 +5,7 @@ import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 
 public class Cattarameter
@@ -51,7 +48,7 @@ public class Cattarameter
 
     public Cattarameter (String name, ArgumentType<?> type, List<String> literalSuggestions)
     {
-        this(name, type, convertListToMap(literalSuggestions));
+        this(name, type, convertCollectionToMap(literalSuggestions));
     }
 
     public Cattarameter (String name, ArgumentType<?> type, Map<String, String> literalSuggestions)
@@ -101,7 +98,15 @@ public class Cattarameter
                 }
                 else if(input instanceof List<?> list)
                 {
-                    return convertListToMap(list);
+                    return convertCollectionToMap(list);
+                }
+                else if(input instanceof Set<?> set)
+                {
+                    return convertCollectionToMap(set);
+                }
+                else if(input instanceof Queue<?> que)
+                {
+                    return convertCollectionToMap(que);
                 }
                 else
                 {
@@ -184,7 +189,7 @@ public class Cattarameter
         return doDefaultSuggestions;
     }
 
-    static HashMap<String, String> convertListToMap(List<?> suggestion)
+    static HashMap<String, String> convertCollectionToMap(Collection<?> suggestion)
     {
         HashMap<String, String> suggestionMap = new HashMap<>();
 

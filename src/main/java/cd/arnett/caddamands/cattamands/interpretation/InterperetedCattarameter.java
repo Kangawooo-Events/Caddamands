@@ -36,7 +36,7 @@ public class InterperetedCattarameter extends Cattarameter
     }
 
     protected InterperetedCattarameter(String name, ArgumentType<?> type, Map<String, String> literalSuggestions, GenericSuggestions lambdaSuggestions, boolean doDefaultSuggestions) {
-        super(name, type, literalSuggestions, lambdaSuggestions, null, doDefaultSuggestions);
+        super(name, type, literalSuggestions, lambdaSuggestions, null, doDefaultSuggestions, null);
     }
 
     protected InterperetedCattarameter(String name, ArgumentType<?> type, Command<CommandSourceStack> executes) {
@@ -56,7 +56,7 @@ public class InterperetedCattarameter extends Cattarameter
     }
 
     protected InterperetedCattarameter(String name, ArgumentType<?> type, Map<String, String> literalSuggestions, GenericSuggestions lambdaSuggestions, boolean doDefaultSuggestions, Command<CommandSourceStack> executes) {
-        super(name, type, literalSuggestions, lambdaSuggestions, executes, doDefaultSuggestions);
+        super(name, type, literalSuggestions, lambdaSuggestions, executes, doDefaultSuggestions, null);
     }
 
     //endregion

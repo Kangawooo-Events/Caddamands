@@ -276,6 +276,13 @@ public abstract class Cattamand {
                 arg.executes(getSyntaxErrorMessage());
             }
 
+            //fill permission
+            var permissionCheck = currentArgument.getPermissionCheck();
+            if(permissionCheck != null)
+            {
+                arg.requires(stack -> currentArgument.getPermissionCheck().test(stack));
+            }
+
             //if we are at the last argument then attach it to the root
             //otherwise just move the snake up the tree
             if(i == 0)

@@ -7,6 +7,7 @@ import io.papermc.paper.command.brigadier.CommandSourceStack;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class Cattarameter
 {
@@ -22,6 +23,7 @@ public class Cattarameter
     Map<String, String> literalSuggestions;
     Function<CommandContext<CommandSourceStack>, Map<String, String>> lambdaSuggestions;
     boolean doDefaultSuggestions;
+    Predicate<CommandSourceStack> lambdaPermission;
     Command<CommandSourceStack> executes;
 
     //endregion
@@ -53,7 +55,7 @@ public class Cattarameter
 
     public Cattarameter (String name, ArgumentType<?> type, Map<String, String> literalSuggestions)
     {
-        this(name, type, literalSuggestions, null, null, true);
+        this(name, type, literalSuggestions, null, null, true, null);
     }
 
     public Cattarameter (String name, ArgumentType<?> type, GenericSuggestions lambdaSuggestions)
@@ -61,23 +63,37 @@ public class Cattarameter
         this(name, type, lambdaSuggestions,  null);
     }
 
-    public Cattarameter (String name, ArgumentType<?> type, GenericSuggestions lambdaSuggestions, Command<CommandSourceStack> executes)
+    public Cattarameter (String name, ArgumentType<?> type, GenericSuggestions lambdaSuggestions , Command<CommandSourceStack> executes)
     {
-        this(name, type, Map.of(), lambdaSuggestions,executes,  true);
+        this(name, type, Map.of(), lambdaSuggestions, executes,  true, null);
     }
 
-    public Cattarameter (String name, ArgumentType<?> type,GenericSuggestions lambdaSuggestions,Command<CommandSourceStack> executes, boolean doDefaultSuggestions)
+    public Cattarameter (String name, ArgumentType<?> type, GenericSuggestions lambdaSuggestions ,Command<CommandSourceStack> executes, boolean doDefaultSuggestions)
     {
-        this(name, type, Map.of(), lambdaSuggestions, executes, doDefaultSuggestions);
+        this(name, type, Map.of(), lambdaSuggestions, executes, doDefaultSuggestions, null);
     }
 
-    public Cattarameter (String name, ArgumentType<?> type, Map<String, String> literalSuggestions, GenericSuggestions lambdaSuggestions, Command<CommandSourceStack> executes, boolean doDefaultSuggestions)
+    public Cattarameter (String name, ArgumentType<?> type, GenericSuggestions lambdaSuggestions,Command<CommandSourceStack> executes, boolean doDefaultSuggestions, Predicate<CommandSourceStack> lambdaPermission)
+    {
+        this(name, type, Map.of(), lambdaSuggestions, executes, doDefaultSuggestions, lambdaPermission);
+    }
+
+    public Cattarameter (
+            String name,
+            ArgumentType<?> type,
+            Map<String, String> literalSuggestions,
+            GenericSuggestions lambdaSuggestions,
+            Command<CommandSourceStack> executes,
+            boolean doDefaultSuggestions,
+            Predicate<CommandSourceStack> lambdaPermission
+    )
     {
         this.name = name;
         this.type = type;
         this.literalSuggestions = literalSuggestions;
         this.doDefaultSuggestions = doDefaultSuggestions;
         this.executes = executes;
+        this.lambdaPermission = lambdaPermission;
 
         //differentiate between map or list of strings
         if(lambdaSuggestions != null)
@@ -151,6 +167,14 @@ public class Cattarameter
     public Command<CommandSourceStack> getExecutes()
     {
         return executes;
+    }
+
+    /**
+     * @return returns the permission check for this argument
+     */
+    public Predicate<CommandSourceStack> getPermissionCheck()
+    {
+        return lambdaPermission;
     }
 
 
